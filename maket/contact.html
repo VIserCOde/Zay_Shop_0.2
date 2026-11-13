@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zay - Contacts & Location</title>
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <style>
+        :root {
+            --bg-color: #0b0f17;
+            --text-color: #ffffff;
+            --text-muted: #a0aec0;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --header-bg: rgba(11, 15, 23, 0.7);
+            --top-nav-bg: rgba(33, 41, 52, 0.7);
+            --gradient-start: #59ab6e;
+            --gradient-end: #a3e6b5;
+            --radial-1: rgba(89, 171, 110, 0.15);
+            --radial-2: rgba(33, 41, 52, 0.4);
+            --card-text: #cbd5e0;
+            --input-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(0, 0, 0, 0.05);
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --top-nav-bg: rgba(33, 41, 52, 0.95);
+            --gradient-start: #489359;
+            --gradient-end: #59ab6e;
+            --radial-1: rgba(89, 171, 110, 0.08);
+            --radial-2: rgba(233, 236, 239, 0.5);
+            --card-text: #495057;
+            --input-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, 'Segoe UI', Roboto, sans-serif;
+            transition: background-color 0.5s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .neon-sphere {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatSpheres 20s infinite ease-in-out alternate;
+        }
+
+        .sphere-1 {
+            top: -100px;
+            right: -50px;
+            background: radial-gradient(circle, var(--radial-1) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+
+        .sphere-2 {
+            bottom: -150px;
+            left: -100px;
+            background: radial-gradient(circle, var(--radial-2) 0%, rgba(0, 0, 0, 0) 70%);
+            animation-delay: -5s;
+        }
+    </style>
+    <style>
+                .top-nav {
+            background-color: var(--top-nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #dbdee2;
+            padding: 12px 8%;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1001;
+            position: relative;
+        }
+
+        .top-nav a {
+            color: #dbdee2;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .top-nav a:hover {
+            color: #59ab6e;
+        }
+
+        .social-icons a {
+            margin-left: 20px;
+            margin-right: 0;
+        }
+
+                .header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: #59ab6e;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .main-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .main-menu li {
+            margin: 0 25px;
+        }
+
+        .main-menu a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.8;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .main-menu a:hover {
+            opacity: 1;
+            color: #59ab6e;
+        }
+
+                .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            opacity: 1;
+            color: #59ab6e;
+            transform: rotate(30deg);
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-icons a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 20px;
+            opacity: 0.8;
+        }
+
+        .nav-icons a:hover {
+            opacity: 1;
+            color: #59ab6e;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background-color: #59ab6e;
+            color: white;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+                .contacts-hero {
+            padding: 80px 8% 40px;
+            text-align: center;
+        }
+
+        .contacts-hero h1 {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--text-color), var(--gradient-start), var(--gradient-end), var(--text-color));
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: liquidText 8s linear infinite;
+        }
+
+        .contacts-hero p {
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+                .contacts-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+                .info-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .contact-info-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: cubicFadeInSide 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .contact-info-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .contact-info-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .contact-info-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .contact-info-card:hover {
+            transform: translateX(5px) !important;
+            border-color: rgba(89, 171, 110, 0.4);
+            box-shadow: 0 20px 40px rgba(89, 171, 110, 0.08);
+        }
+
+        .contact-info-card i {
+            color: #59ab6e;
+            background: rgba(89, 171, 110, 0.1);
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 24px;
+        }
+
+        .contact-info-card h3 {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .contact-info-card p {
+            font-size: 18px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+                .map-container {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            height: 100%;
+            min-height: 250px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cubicFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+                .contact-form-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            opacity: 0;
+            transform: translateX(30px);
+            animation: cubicFadeInSide 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+            animation-fill-mode: forwards;
+        }
+
+        .contact-form-container h2 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 20px;
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #59ab6e;
+            box-shadow: 0 0 15px rgba(89, 171, 110, 0.15);
+        }
+
+        textarea.form-control {
+            resize: none;
+            height: 140px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: #59ab6e;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(89, 171, 110, 0.2);
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(89, 171, 110, 0.4);
+        }
+
+        @keyframes liquidText {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+
+        @keyframes cubicFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cubicFadeInSide {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes floatSpheres {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-30px);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .contacts-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-nav, .main-menu, .nav-icons .fav-icon, .nav-icons .cart-icon span:not(.badge) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="neon-sphere sphere-1"></div>
+<div class="neon-sphere sphere-2"></div>
+<canvas class="bg-particles" id="particlesCanvas"></canvas>
+<div class="top-nav">
+    <div>
+        <a href="mailto:info@company.com"><i class="fa fa-envelope"></i> info@company.com</a>
+        <a href="tel:010-020-0340"><i class="fa fa-phone"></i> 010-020-0340</a>
+    </div>
+    <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+    </div>
+</div>
+<header class="header">
+    <a href="#" class="logo">Zay</a>
+    <ul class="main-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="policy.html">Policy</a></li>
+    </ul>
+    <div class="nav-icons">
+        <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()"><i class="fas fa-moon"></i></button>
+
+    </div>
+</header>
+<section class="contacts-hero">
+    <h1>Связаться с Нами</h1>
+    <p>Есть вопросы по ассортименту или хотите заказать индивидуальный дизайн? Наша команда всегда готова помочь
+        вам.</p>
+</section>
+<div class="contacts-wrapper">
+    <div class="info-sidebar">
+        <div class="contact-info-card">
+            <i class="fas fa-map-marked-alt"></i>
+            <div>
+                <h3>Наш Главный Офис</h3>
+                <p>г. Москва, ул. Дизайнеров, 14</p>
+            </div>
+        </div>
+
+        <div class="contact-info-card">
+            <i class="fas fa-phone-alt"></i>
+            <div>
+                <h3>Телефон службы поддержки</h3>
+                <p>010-020-0340</p>
+            </div>
+        </div>
+
+        <div class="contact-info-card">
+            <i class="fas fa-envelope-open-text"></i>
+            <div>
+                <h3>Электронная почта</h3>
+                <p>info@company.com</p>
+            </div>
+        </div>
+        <div class="map-container"
+             style="position: relative; display: flex; align-items: center; justify-content: center; background: #1a202c; min-height: 450px;">
+
+            <img src="https://yandex.ru" alt="Карта"
+                 style="width: 100%; height: 100%; object-fit: cover; opacity: 0.85;"> <a href="https://yandex.ru"
+                                                                                          target="_blank"
+                                                                                          style="position: absolute; background: #59ab6e; color: white; padding: 15px 30px; text-decoration: none; border-radius: 30px; font-weight: bold; box-shadow: 0 4px 15px rgba(89,171,110,0.4); transition: transform 0.2s;">
+            <i class="fa fa-map-marker-alt"></i> Открыть интерактивную карту
+        </a>
+        </div>
+
+    </div>
+    <div class="contact-form-container">
+        <h2>Напишите нам</h2>
+        <form id="contactForm" onsubmit="handleFormSubmit(event)">
+            <div class="form-group">
+                <label for="name">Ваше имя</label>
+                <input type="text" id="name" class="form-control" placeholder="Иван Иванов" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Электронная почта (Email)</label>
+                <input type="email" id="email" class="form-control" placeholder="example@mail.com" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Ваше сообщение</label>
+                <textarea id="message" class="form-control"
+                          placeholder="Введите текст вашего вопроса или предложения..." required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Отправить сообщение</button>
+        </form>
+    </div>
+
+</div>
+<script>
+    // Движок Темы (Dark/Light Switcher)
+    function toggleTheme() {
+        playClickSound();
+        const body = document.body;
+        const btn = document.getElementById('themeBtn');
+        if (body.getAttribute('data-theme') === 'light') {
+            body.removeAttribute('data-theme');
+            btn.innerHTML = '<i class="fas fa-moon"></i>';
+        } else {
+            body.setAttribute('data-theme', 'light');
+            btn.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    }
+
+    // Web Audio API — Премиальный футуристичный синтезатор звука клика
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playClickSound() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    // Обработка отправки формы обратной связи
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        playClickSound();
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+
+        // Кастомное футуристичное уведомление вместо стандартного alert
+        alert(`Спасибо, ${name}! Ваше сообщение успешно отправлено. Мы ответим вам на почту ${email} в ближайшее время.`);
+
+        // Очистка формы
+        document.getElementById('contactForm').reset();
+    }
+
+    // Интерактивный движок анимированных частиц заднего плана
+    const canvas = document.getElementById('particlesCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 0.5;
+            this.speedX = Math.random() * 0.4 - 0.2;
+            this.speedY = Math.random() * 0.4 - 0.2;
+            this.opacity = Math.random() * 0.4 + 0.1;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        }
+
+        draw() {
+            ctx.fillStyle = `rgba(89, 171, 110, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function init() {
+        particles = [];
+        const count = Math.min(70, Math.floor(window.innerWidth / 20));
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Регистрация — Zay Shop</title>
+    <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <script src="https://google.com" async defer></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .register-container {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 420px;
+            border-top: 4px solid #59b27a;         }
+
+        .register-container h2 {
+            margin-bottom: 25px;
+            color: #212934;
+            text-align: center;
+            font-weight: 500;
+            font-size: 26px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #212934;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            border-color: #59b27a;
+            background-color: #ffffff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(89, 178, 122, 0.15);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #59b27a;
+            border: none;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: #489e68;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 25px 0;
+            color: #a0aec0;
+            font-size: 13px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+
+        .divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+                .google-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            min-height: 44px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .login-link a {
+            color: #59b27a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>Регистрация</h2>
+
+    <form id="registerForm" action="#" method="POST">
+        <div class="form-group">
+            <label for="username">Имя пользователя</label>
+            <input type="text" id="username" name="username" placeholder="Иван Иванов" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Электронная почта</label>
+            <input type="email" id="email" name="email" placeholder="example@mail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" placeholder="Минимум 6 символов" minlength="6"
+                   required>
+            <div class="error-message" id="passwordError">Пароль слишком простой!</div>
+        </div>
+
+        <button type="submit" class="btn-submit">Создать аккаунт</button>
+    </form>
+
+    <div class="divider">или</div>
+    <div class="google-btn-wrapper">
+        <div id="g_id_onload"
+             data-client_id="://googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="continue_with"
+             data-shape="rectangular"
+             data-logo_alignment="left"
+             data-width="360">
+        </div>
+    </div>
+
+    <div class="login-link">
+        Уже зарегистрированы? <a href="login.html">Войти</a>
+    </div>
+</div>
+
+<script>
+    // Обработка стандартной формы
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (password.toLowerCase() === '123456' || password.toLowerCase() === 'qwerty') {
+            document.getElementById('passwordError').style.display = 'block';
+            return;
+        } else {
+            document.getElementById('passwordError').style.display = 'none';
+        }
+
+        console.log('Данные формы:', {username, email, password});
+        alert('Форма отправлена! .');
+    });
+
+    // Функция ответа от Google API
+    function handleCredentialResponse(response) {
+        console.log("Получен зашифрованный токен Google:", response.credential);
+
+        // Быстрая расшифровка профиля на клиенте
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        const googleUser = JSON.parse(jsonPayload);
+        console.log("Данные аккаунта Google:", googleUser);
+
+        alert(`Успешно! Отличный выбор, ${googleUser.name}. Ваша почта: ${googleUser.email}`);
+    }
+</script>
+</body>
+</html>

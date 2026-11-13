@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Корзина покупок {% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="h2 pb-4 text-center" style="font-weight: 500;">Shopping Cart</h1>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden;">
+                <div class="table-responsive">
+                    <table class="table table-borderless align-middle mb-0" style="min-width: 600px;">
+                        <thead class="bg-light text-secondary" style="font-size: 14px; font-weight: 500;">
+                        <tr>
+                            <th scope="col" class="ps-4 py-3">Product</th>
+                            <th scope="col" class="py-3">Price</th>
+                            <th scope="col" class="py-3 text-center" style="width: 140px;">Quantity</th>
+                            <th scope="col" class="py-3">Total</th>
+                            <th scope="col" class="pe-4 py-3"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in cart_items %}
+                        <tr style="border-bottom: 1px solid #f8f9fa;">
+                            <td class="ps-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 70px; height: 70px; border-radius: 8px; overflow: hidden; background: #f8f9fa;"
+                                         class="me-3">
+                                        {% if item.product.images.all %}
+                                        <img src="{{ item.product.images.first.image.url }}"
+                                             alt="{{ item.product.title }}"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                        {% else %}
+                                        <img src="{% static 'assets/img/shop_01.jpg' %}" alt="No Image"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'shop_single' item.product.slug %}"
+                                           class="text-decoration-none text-dark fw-bold d-block"
+                                           style="font-size: 16px;">{{ item.product.title }}</a>
+                                        <small class="text-muted" style="font-size: 12px;">Size: {{ item.product.sizes
+                                            }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3" style="font-size: 16px; color: #495057;">${{ item.product.price }}</td>
+                            <td class="py-3">
+                                <div class="d-flex align-items-center justify-content-center bg-light rounded-pill"
+                                     style="padding: 4px 10px; height: 36px; max-width: 120px; margin: 0 auto;">
+                                    <form action="{% url 'change_cart_quantity' item.id 'minus' %}" method="POST"
+                                          class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                                class="btn btn-link text-dark p-0 border-0 text-decoration-none fw-bold"
+                                                style="font-size: 16px; width: 24px;">-
+                                        </button>
+                                    </form>
+                                    <span class="mx-2 fw-bold text-dark"
+                                          style="font-size: 14px; min-width: 15px; text-align: center;">{{ item.quantity }}</span>
+                                    <form action="{% url 'change_cart_quantity' item.id 'plus' %}" method="POST"
+                                          class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                                class="btn btn-link text-dark p-0 border-0 text-decoration-none fw-bold"
+                                                style="font-size: 16px; width: 24px;">+
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="py-3 fw-bold" style="font-size: 16px; color: #212529;">${{ item.total_price }}
+                            </td>
+                            <td class="pe-4 py-3 text-end">
+                                <form action="{% url 'remove_from_cart' item.id %}" method="POST" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn text-danger p-0 border-0" title="Remove item">
+                                        <i class="fas fa-trash-alt" style="font-size: 16px;"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="fas fa-shopping-basket mb-3"
+                                   style="font-size: 40px; color: #bcbcbc; display: block;"></i>
+                                <h3 class="h5">Your shopping cart is empty</h3>
+                                <p class="mb-0" style="font-weight: 300;">Explore our catalog to add items.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 p-4" style="border-radius: 15px; background: #fff;">
+                <h4 class="h5 mb-4" style="font-weight: 500; color: #212529;">Order Summary</h4>
+
+                <div class="d-flex justify-content-between mb-3" style="font-size: 15px; color: #6c757d;">
+                    <span>Items count:</span>
+                    <span class="fw-bold text-dark">{{ cart_items.count }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3" style="font-size: 15px; color: #6c757d;">
+                    <span>Shipping:</span>
+                    <span class="text-success fw-bold">Free</span>
+                </div>
+
+                <hr style="border-color: #f1f1f1; margin: 20px 0;">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span style="font-size: 16px; font-weight: 500; color: #212529;">Total Cost:</span>
+                    <span style="font-size: 22px; font-weight: 600; color: #59ab6e;">${{ total_cart_price }}</span>
+                </div>
+
+                {% if cart_items %}
+                <a href="{% url 'checkout' %}" class="btn btn-success btn-lg w-100 rounded-pill"
+                   style="font-size: 16px; font-weight: 500; height: 48px; display: flex; align-items: center; justify-content: center; background-color: #59ab6e; border: none;">
+                    Proceed to Checkout
+                </a>
+
+                {% else %}
+                <button class="btn btn-secondary btn-lg w-100 rounded-pill" disabled
+                        style="font-size: 16px; height: 48px;">
+                    Cart is Empty
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

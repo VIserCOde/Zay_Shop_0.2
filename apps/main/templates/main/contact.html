@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Контакты | Zay Shop {% endblock %}
+
+{% block content %}
+<div class="container-fluid bg-light py-5">
+    <div class="col-md-6 m-auto text-center">
+        <h1 class="h1" style="font-weight: 600; color: #1a252f;">Contact Us</h1>
+        <p class="text-muted">
+            Свяжитесь с нами любым удобным способом или оставьте сообщение через форму ниже.
+        </p>
+    </div>
+</div>
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-5 mb-5">
+            <h2 class="h4 pb-3" style="font-weight: 600;">Наши контакты</h2>
+            <ul class="list-unstyled text-muted mb-4" style="font-size: 16px; line-height: 2;">
+                <li><i class="fa fa-map-marker-alt text-success me-2"></i> г. Ташкент, ул. Амира Темура, 107</li>
+                <li><i class="fa fa-phone text-success me-2"></i> <a href="tel:+998901234567"
+                                                                     class="text-decoration-none text-muted">+998 (90)
+                    123-45-67</a></li>
+                <li><i class="fa fa-envelope text-success me-2"></i> <a href="mailto:info@zayshop.uz"
+                                                                        class="text-decoration-none text-muted">info@zayshop.uz</a>
+                </li>
+                <li><i class="fa fa-clock text-success me-2"></i> Пн - Сб: 09:00 - 18:00 (Вс: выходной)</li>
+            </ul>
+            <div class="rounded shadow-sm overflow-hidden" style="height: 300px; width: 100%;">
+                <iframe src="https://yandex.ru" width="100%" height="100%" frameborder="0"></iframe>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <h2 class="h4 pb-3" style="font-weight: 600;">Отправить нам сообщение</h2>
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %} {% if request.user.is_authenticated %}
+            <form method="post" action="{% url 'contact' %}" role="form" class="p-4 card shadow-sm border-0">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="inputname" class="form-label font-weight-bold">Ваше имя</label> <input type="text"
+                                                                                                           class="form-control mt-1"
+                                                                                                           id="inputname"
+                                                                                                           name="name"
+                                                                                                           value="{{ request.user.username }}"
+                                                                                                           readonly
+                                                                                                           style="background-color: #e9ecef; cursor: not-allowed;">
+                    </div>
+
+                    <div class="form-group col-md-6 mb-3">
+                        <label for="inputemail" class="form-label font-weight-bold">Email для связи</label> <input
+                            type="email" class="form-control mt-1" id="inputemail" name="email"
+                            value="{{ request.user.email|default:'' }}" placeholder="ivan@example.com" required>
+                    </div>
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="inputsubject" class="form-label font-weight-bold">Тема обращения</label>
+                    <input type="text" class="form-control mt-1" id="inputsubject" name="subject"
+                           placeholder="Вопрос по заказу / Сотрудничество" required>
+                </div>
+                <div class="mb-3">
+                    <label for="inputmessage" class="form-label font-weight-bold">Сообщение</label>
+                    <textarea class="form-control mt-1" id="inputmessage" name="message" rows="5"
+                              placeholder="Введите текст вашего сообщения..." required></textarea>
+                </div>
+                <div class="row pt-2">
+                    <div class="col text-end">
+                        <button type="submit" class="btn btn-success btn-lg px-4"
+                                style="background-color: #59ab6e; border: none;">Отправить
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+            <div class="alert alert-warning text-center p-5 card shadow-sm border-0" role="alert">
+                <i class="fas fa-lock fa-3x mb-3 text-warning"></i>
+                <h4 class="alert-heading" style="font-weight: 600;">Доступ ограничен</h4>
+                <p class="mb-4 text-muted">Только зарегистрированные пользователи могут отправлять сообщения в службу
+                    поддержки.</p>
+                <a href="{% url 'login' %}" class="btn btn-success px-4 py-2"
+                   style="background-color: #59ab6e; border: none;">Войти в аккаунт</a>
+            </div>
+            {% endif %}
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}

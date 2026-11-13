@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zay Shop - Избранное</title>
+    <link rel="stylesheet" href="https://googleapis.com">
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        :root {
+            --primary: #59ab6e;             --dark-bg: #212934;             --text-dark: #212529;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            width: 100%;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+                .top-nav {
+            background-color: var(--dark-bg);
+            color: #fff;
+            padding: 10px 0;
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        .top-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-nav-left {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .top-nav-left a {
+            color: #cfd3da;
+            text-decoration: none;
+        }
+
+        .top-nav-left i {
+            color: #fff;
+            margin-right: 5px;
+        }
+
+        .top-nav-right a {
+            color: #fff;
+            margin-left: 15px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .top-nav-right a:hover {
+            color: var(--primary);
+        }
+
+                header {
+            background: #fff;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;             align-items: center;
+        }
+
+        .logo {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .main-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        .main-menu a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 400;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .main-menu a:hover {
+            color: var(--primary);
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+                .nav-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            color: #212529;
+            text-decoration: none;
+        }
+
+        .nav-icon svg {
+            display: block;
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            background-color: #e9ecef;
+            color: #212529;
+            font-size: 14px;
+            font-weight: 600;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-badge.wide {
+            width: auto;
+            min-width: 32px;
+            height: 24px;
+            padding: 0 6px;
+            border-radius: 12px;
+            right: -14px;
+        }
+
+                main {
+            flex-grow: 1;
+            padding: 60px 0;
+            background-color: #e9ecef;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 50px auto;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: #fff;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .remove-fav {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #dc3545;
+            font-size: 16px;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .img-wrapper {
+            width: 100%;
+            height: 350px;
+            background: #fff;
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 14px;
+        }
+
+        .price {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        .product-name {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: var(--text-dark);
+            display: block;
+        }
+
+        .description {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .btn-cart {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+                footer {
+            background-color: var(--dark-bg);
+            color: #fff;
+            padding: 60px 0 30px 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            border-bottom: 1px solid #2d3748;
+            padding-bottom: 40px;
+            margin-bottom: 20px;
+        }
+
+        .footer-col h2 {
+            font-size: 22px;
+            font-weight: 200;
+            margin-bottom: 20px;
+        }
+
+        .footer-col h2.brand {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+            font-weight: 300;
+            font-size: 16px;
+            color: #cfd3da;
+        }
+
+        .footer-links a {
+            color: #cfd3da;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            color: #cfd3da;
+            font-size: 14px;
+        }
+    </style>
+    <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/templatemo.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-light d-none d-lg-block" id="templatemo_nav_top">
+        <div class="container text-light">
+            <div class="w-100 d-flex justify-content-between">
+                <div>
+                    <i class="fa fa-envelope mx-2"></i>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="mailto:info@company.com">info@company.com</a>
+                    <i class="fa fa-phone mx-2"></i>
+                    <a class="navbar-sm-brand text-light text-decoration-none" href="tel:010-020-0340">010-020-0340</a>
+                </div>
+                <div>
+                    <a class="text-light" href="https://fb.com/templatemo" target="_blank" rel="sponsored"><i
+                            class="fab fa-facebook-f fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://www.instagram.com/" target="_blank"><i
+                            class="fab fa-instagram fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://twitter.com/" target="_blank"><i
+                            class="fab fa-twitter fa-sm fa-fw me-2"></i></a>
+                    <a class="text-light" href="https://www.linkedin.com/" target="_blank"><i
+                            class="fab fa-linkedin fa-sm fa-fw"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <nav class="navbar navbar-expand-lg navbar-light shadow">
+        <div class="container d-flex justify-content-between align-items-center">
+
+            <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">
+                Zay
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#templatemo_main_nav" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="align-self-center collapse navbar-collapse flex-fill  d-lg-flex justify-content-lg-between"
+                 id="templatemo_main_nav">
+                <div class="flex-fill">
+                    <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="about.html">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="shop.html">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.html">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="policy.html">Policy</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar align-self-center d-flex">
+                    <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
+                            <div class="input-group-text">
+                                <i class="fa fa-fw fa-search"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="nav-icon d-none d-lg-inline" href="#" data-bs-toggle="modal"
+                       data-bs-target="#templatemo_search">
+                        <i class="fa fa-fw fa-search text-dark mr-2"></i>
+                    </a>
+                    <a class="nav-icon position-relative text-decoration-none mx-2" href="favorites.html"
+                       title="Избранное">
+                        <i class="fa fa-fw fa-heart text-success"></i>
+                        </button>
+                    </a>
+                    <a class="nav-icon position-relative text-decoration-none" href="cart.html">
+                        <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">7</span>
+                    </a>
+                    <a class="nav-icon position-relative text-decoration-none" href="register.html">
+                        <i class="fa fa-fw fa-user text-dark mr-3"></i>
+                        <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">+99</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="section-header">
+                <h1 class="page-title">Your favourites</h1>
+                <p class="section-subtitle">Your saved items. Go to checkout or add them to your shopping cart.</p>
+            </div>
+
+            <div class="products-grid">
+                <div class="product-card">
+                    <button class="remove-fav" title="Удалить"><i class="fa-solid fa-heart"></i></button>
+                    <div class="img-wrapper">
+                        <img src="https://unsplash.com" alt="Gym Weight">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta-row">
+                            <div class="stars">★★★★★</div>
+                            <span class="price">$240.00</span>
+                        </div>
+                        <a href="#" class="product-name">Gym Weight</a>
+                        <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur
+                            combo
+                            lest.</p>
+                        <button class="btn-cart">Go Shop</button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <button class="remove-fav" title="Удалить"><i class="fa-solid fa-heart"></i></button>
+                    <div class="img-wrapper">
+                        <img src="https://unsplash.com" alt="Cloud Nike Shoes">
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta-row">
+                            <div class="stars">★★★★★</div>
+                            <span class="price">$480.00</span>
+                        </div>
+                        <a href="#" class="product-name">Cloud Nike Shoes</a>
+                        <p class="description">Aenean sollicitudin ex sit amet euismod. Contextual lest combo.
+                            Reprehenderit
+                            in voluptate.</p>
+                        <button class="btn-cart">Go Shop</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    </body>
+</html>

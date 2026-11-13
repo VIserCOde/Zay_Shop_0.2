@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Оформление заказа {% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-7 mb-4">
+            <div class="card shadow-sm border-0 p-4" style="border-radius: 15px; background: #fff;">
+                <h3 class="h4 mb-4" style="font-weight: 500; color: #212529;">Shipping Details</h3>
+
+                <form method="post" action="{% url 'checkout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Confirm and Order</button>
+                </form>
+
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 p-4" style="border-radius: 15px; background: #f8f9fa;">
+                <h4 class="h5 mb-4" style="font-weight: 500; color: #212529;">Your Order</h4>
+                <ul class="list-unstyled mb-0">
+
+                    {% for item in cart_items %}
+                    <li class="d-flex justify-content-between align-items-center mb-3 pb-2"
+                        style="border-bottom: 1px solid #edecec;">
+                        <div>
+                            <span class="fw-bold text-dark" style="font-size: 15px;">{{ item.product.title }}</span>
+                            <small class="text-muted d-block" style="font-size: 12px;">Quantity: {{ item.quantity
+                                }}</small>
+                        </div>
+                        <span class="fw-bold text-secondary" style="font-size: 15px;">${{ item.total_price }}</span>
+                    </li>
+                    {% endfor %}
+
+                    <li class="d-flex justify-content-between align-items-center mt-4">
+                        <span class="h6 mb-0" style="font-weight: 500; color: #212529;">Total Cost:</span>
+                        <span class="h4 mb-0 fw-bold text-success"
+                              style="font-weight: 600;">${{ total_cart_price }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

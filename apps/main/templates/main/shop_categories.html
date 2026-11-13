@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Каталог товаров {% endblock %}
+{% block extra_css %} {% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-3">
+            <h1 class="h2 pb-4" style="font-weight: 500; color: #212529;">Categories</h1>
+            <ul class="list-unstyled templatemo-accordion" style="padding-left: 0;">
+                <li class="pb-3">
+                    <a class="subcategory-link active d-flex justify-content-between h3 text-decoration-none" href="#"
+                       data-filter="all"
+                       style="color: #59ab6e; font-weight: 500; font-size: 18px; transition: color 0.2s ease;">
+                        All Products
+                        <i class="fas fa-boxes mt-1" style="font-size: 14px;"></i>
+                    </a>
+                </li>
+
+                {% for category in categories %}
+                <li class="pb-3" style="border-bottom: 1px solid #f1f1f1;">
+                    <a class="collapsed d-flex justify-content-between h3 text-decoration-none py-2 text-dark"
+                       data-bs-toggle="collapse" href="#collapse-{{ category.id }}" role="button" aria-expanded="false"
+                       style="font-weight: 400; font-size: 18px; transition: color 0.2s ease;"
+                       onmouseover="this.style.color='#59ab6e'" onmouseout="this.style.color='#212529'">
+                        {{ category.name }}
+                        <i class="fa fa-fw fa-chevron-circle-down mt-1 text-muted" style="font-size: 14px;"></i>
+                    </a>
+
+                    <div class="collapse show" id="collapse-{{ category.id }}">
+                        <ul class="list-unstyled pl-3 pt-2" style="padding-left: 15px;">
+                            {% for subcategory in category.sub_categories.all %}
+                            <li class="py-1">
+                                <a class="subcategory-link text-decoration-none text-secondary d-block py-1" href="#"
+                                   data-filter="{{ subcategory.name|lower }}"
+                                   style="font-size: 15px; font-weight: 300; transition: all 0.2s ease;"
+                                   onmouseover="this.style.color='#59ab6e'; this.style.paddingLeft='5px';"
+                                   onmouseout="this.style.color='#6c757d'; this.style.paddingLeft='0';">
+                                    <i class="fas fa-angle-right me-2 text-muted"
+                                       style="font-size: 12px; margin-right: 6px;"></i>{{ subcategory.name }}
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li class="py-1"><span class="text-muted" style="font-size: 14px; font-weight: 300;">Нет подкатегорий</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-lg-9">
+            <div class="row pb-4 align-items-center">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center" style="max-width: 400px; position: relative; margin: 0;">
+                        <input type="text" id="live-search" class="form-control rounded-pill shadow-sm"
+                               placeholder="Поиск товаров..." style="padding-right: 45px; height: 42px; width: 100%;">
+                        <span class="text-success"
+                              style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 18px; z-index: 5; pointer-events: none;">
+                            <i class="fa fa-fw fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-md-end align-items-center">
+                        <span class="text-muted me-2" style="font-size: 14px; white-space: nowrap; margin-right: 10px;">Sort by:</span>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-success dropdown-toggle rounded-pill shadow-sm" type="button"
+                                    id="sortDropdownButton" data-bs-toggle="dropdown" aria-expanded="false"
+                                    style="min-width: 160px; height: 42px; font-size: 14px; padding-left: 20px; padding-right: 20px; text-align: left; position: relative;">
+                                Default
+                            </button>
+                            <select id="live-sort" class="d-none">
+                                <option value="default" selected>Default</option>
+                                <option value="alpha">A to Z</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                            </select>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="sortDropdownButton"
+                                style="border-radius: 15px; border: 1px solid #e9ecef; padding: 5px; margin-top: 5px; font-size: 14px; z-index: 1000;">
+                                <li><a class="dropdown-item rounded-3 py-2" href="#" data-value="default"
+                                       onclick="updateLiveSort(this, 'Default'); return false;">Default</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="#" data-value="alpha"
+                                       onclick="updateLiveSort(this, 'A to Z'); return false;">A to Z</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="#" data-value="price-low"
+                                       onclick="updateLiveSort(this, 'Price: Low to High'); return false;">Price: Low to
+                                    High</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="#" data-value="price-high"
+                                       onclick="updateLiveSort(this, 'Price: High to Low'); return false;">Price: High
+                                    to Low</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="products-container">
+                {% for product in products %}
+                <div class="col-md-4 product-item" data-title="{{ product.title|lower }}"
+                     data-price="{{ product.price }}" data-subcategory="{{ product.subcategory.name|lower }}"
+                     data-order="{{ forloop.counter0 }}">
+                    <div class="product-wap card rounded-0 mb-4">
+                        <div class="card rounded-0" style="position: relative; overflow: hidden;">
+                            {% if product.images.all %}
+                            <img class="card-img rounded-0 img-fluid" src="{{ product.images.first.image.url }}"
+                                 alt="{{ product.title }}" style="width: 100%; height: 350px; object-fit: cover;">
+                            {% else %}
+                            <img class="card-img rounded-0 img-fluid" src="{% static 'assets/img/shop_01.jpg' %}"
+                                 alt="No Image" style="width: 100%; height: 350px; object-fit: cover;">
+                            {% endif %}
+
+                            <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
+                                <ul class="list-unstyled">
+                                    <li style="display: block;">
+                                        {% if product.id in favorite_product_ids %}
+                                        <form action="{% url 'remove_from_favorites' product.id %}" method="POST"
+                                              style="margin: 0; padding: 0;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success text-white"
+                                                    style="border: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;"
+                                                    title="Remove from favourites">
+                                                <i class="fas fa-heart"></i>
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                        <form action="{% url 'add_to_favorites' product.id %}" method="POST"
+                                              style="margin: 0; padding: 0;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success text-white"
+                                                    style="border: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;"
+                                                    title="Add to favourites">
+                                                <i class="far fa-heart"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-success text-white mt-2"
+                                           href="{% url 'shop_single' product.slug %}"
+                                           style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="far fa-eye"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form action="{% url 'add_to_cart' product.id %}" method="POST"
+                                              style="margin: 0; padding: 0;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success text-white mt-2"
+                                                    style="border: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;"
+                                                    title="Add to cart">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body text-center d-flex flex-column align-items-center" style="padding: 20px;">
+                            <a href="{% url 'shop_single' product.slug %}"
+                               class="h3 text-decoration-none text-dark d-block w-100 text-truncate mb-2"
+                               style="font-weight: 500; font-size: 18px;">
+                                {{ product.title }}
+                            </a>
+                            <div class="py-1 w-100 text-center"
+                                 style="color: #ffc107; font-size: 14px; letter-spacing: 2px;">
+                                {% if product.stars_count >= 1 %}<i class="fa fa-star"></i>{% else %}<i
+                                    class="far fa-star" style="color: #bcbcbc;"></i>{% endif %}
+                                {% if product.stars_count >= 2 %}<i class="fa fa-star"></i>{% else %}<i
+                                    class="far fa-star" style="color: #bcbcbc;"></i>{% endif %}
+                                {% if product.stars_count >= 3 %}<i class="fa fa-star"></i>{% else %}<i
+                                    class="far fa-star" style="color: #bcbcbc;"></i>{% endif %}
+                                {% if product.stars_count >= 4 %}<i class="fa fa-star"></i>{% else %}<i
+                                    class="far fa-star" style="color: #bcbcbc;"></i>{% endif %}
+                                {% if product.stars_count >= 5 %}<i class="fa fa-star"></i>{% else %}<i
+                                    class="far fa-star" style="color: #bcbcbc;"></i>{% endif %}
+                            </div>
+
+                            <div class="d-flex justify-content-center align-items-center w-100 py-2"
+                                 style="font-size: 14px; color: #6c757d;">
+                                <span class="me-3">{{ product.sizes|default:"M/L/X/XL" }}</span>
+
+                            </div>
+
+                            <p class="mb-0 fw-bold pt-2 text-success" style="font-size: 18px; font-weight: 600;">
+                                ${{ product.price }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div id="no-products-message" class="col-12 text-center py-5 d-none" style="color: #6c757d;">
+                    <h3>Нету такого товара</h3>
+                    <p style="font-weight: 300;">Попробуйте выбрать другую категорию или изменить запрос.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function updateLiveSort(element, text) {
+        const button = document.getElementById("sortDropdownButton");
+        button.innerText = text;
+
+        const hiddenSelect = document.getElementById("live-sort");
+        hiddenSelect.value = element.getAttribute("data-value");
+
+        const event = new Event('change');
+        hiddenSelect.dispatchEvent(event);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("live-search");
+        const sortSelect = document.getElementById("live-sort");
+        const container = document.getElementById("products-container");
+        const noProductsMessage = document.getElementById("no-products-message");
+        const subcategoryLinks = document.querySelectorAll(".subcategory-link");
+
+        let activeSubcategory = "all";
+
+        function applyAllFilters() {
+            const searchQuery = searchInput.value.toLowerCase().trim();
+            let hasVisibleProducts = false;
+            const items = container.querySelectorAll(".product-item");
+
+            items.forEach(function (item) {
+                const title = item.getAttribute("data-title");
+                const itemSubcategory = item.getAttribute("data-subcategory");
+
+                const matchesSearch = title.includes(searchQuery);
+                const matchesCategory = (activeSubcategory === "all" || itemSubcategory === activeSubcategory);
+
+                if (matchesSearch && matchesCategory) {
+                    item.classList.remove("d-none");
+                    hasVisibleProducts = true;
+                } else {
+                    item.classList.add("d-none");
+                }
+            });
+
+            if (hasVisibleProducts) {
+                noProductsMessage.classList.add("d-none");
+            } else {
+                noProductsMessage.classList.remove("d-none");
+            }
+        }
+
+        subcategoryLinks.forEach(function (link) {
+            link.addEventListener("click", function (e) {
+                e.preventDefault();
+                subcategoryLinks.forEach(l => {
+                    l.style.color = "#6c757d";
+                    l.style.fontWeight = "300";
+                });
+                this.style.color = "#59ab6e";
+                this.style.fontWeight = "500";
+
+                activeSubcategory = this.getAttribute("data-filter");
+                applyAllFilters();
+            });
+        });
+
+        searchInput.addEventListener("input", applyAllFilters);
+
+        sortSelect.addEventListener("change", function () {
+            const sortBy = this.value;
+            const items = Array.from(container.querySelectorAll(".product-item"));
+
+            items.sort(function (a, b) {
+                if (sortBy === "alpha") {
+                    return a.getAttribute("data-title").localeCompare(b.getAttribute("data-title"));
+                } else if (sortBy === "price-low") {
+                    return parseFloat(a.getAttribute("data-price")) - parseFloat(b.getAttribute("data-price"));
+                } else if (sortBy === "price-high") {
+                    return parseFloat(b.getAttribute("data-price")) - parseFloat(a.getAttribute("data-price"));
+                } else {
+                    return parseInt(a.getAttribute("data-order")) - parseInt(b.getAttribute("data-order"));
+                }
+            });
+
+            items.forEach(function (item) {
+                container.appendChild(item);
+            });
+
+            applyAllFilters();
+        });
+    });
+</script>
+{% endblock %}

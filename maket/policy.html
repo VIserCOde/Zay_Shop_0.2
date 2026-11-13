@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zay - Ultimate Privacy Center</title>
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+    <style>
+        :root {
+            --bg-color: #0b0f17;
+            --text-color: #ffffff;
+            --text-muted: #a0aec0;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --header-bg: rgba(11, 15, 23, 0.7);
+            --top-nav-bg: rgba(33, 41, 52, 0.7);
+            --gradient-start: #59ab6e;
+            --gradient-end: #a3e6b5;
+            --radial-1: rgba(89, 171, 110, 0.15);
+            --radial-2: rgba(33, 41, 52, 0.4);
+            --card-text: #cbd5e0;
+            --modal-bg: rgba(15, 23, 36, 0.95);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(0, 0, 0, 0.05);
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --top-nav-bg: rgba(33, 41, 52, 0.95);
+            --gradient-start: #489359;
+            --gradient-end: #59ab6e;
+            --radial-1: rgba(89, 171, 110, 0.08);
+            --radial-2: rgba(233, 236, 239, 0.5);
+            --card-text: #495057;
+            --modal-bg: rgba(255, 255, 255, 0.98);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, 'Segoe UI', Roboto, sans-serif;
+            transition: background-color 0.5s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .neon-sphere {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatSpheres 20s infinite ease-in-out alternate;
+        }
+
+        .sphere-1 {
+            top: -100px;
+            right: -50px;
+            background: radial-gradient(circle, var(--radial-1) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+
+        .sphere-2 {
+            bottom: -150px;
+            left: -100px;
+            background: radial-gradient(circle, var(--radial-2) 0%, rgba(0, 0, 0, 0) 70%);
+            animation-delay: -5s;
+        }
+    </style>
+    <style>
+                .top-nav {
+            background-color: var(--top-nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #dbdee2;
+            padding: 12px 8%;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1001;
+            position: relative;
+        }
+
+        .top-nav a {
+            color: #dbdee2;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .top-nav a:hover {
+            color: #59ab6e;
+        }
+
+        .social-icons a {
+            margin-left: 20px;
+            margin-right: 0;
+        }
+
+                .header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: #59ab6e;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .main-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .main-menu li {
+            margin: 0 25px;
+        }
+
+        .main-menu a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.8;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .main-menu a:hover {
+            opacity: 1;
+            color: #59ab6e;
+        }
+
+                .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            opacity: 1;
+            color: #59ab6e;
+            transform: rotate(30deg);
+        }
+
+        .nav-icons {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-icons a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 20px;
+            opacity: 0.8;
+        }
+
+        .nav-icons a:hover {
+            opacity: 1;
+            color: #59ab6e;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            background-color: #59ab6e;
+            color: white;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+                .privacy-hero {
+            padding: 80px 8% 50px;
+            text-align: center;
+        }
+
+        .privacy-hero h1 {
+            font-size: 56px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            background: linear-gradient(90deg, var(--text-color), var(--gradient-start), var(--gradient-end), var(--text-color));
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: liquidText 8s linear infinite;
+        }
+
+        .privacy-hero p {
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+                .privacy-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .privacy-block {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cubicFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .privacy-block:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .privacy-block:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .privacy-block:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .privacy-block:nth-child(4) {
+            animation-delay: 0.5s;
+        }
+
+        .privacy-block:hover {
+            transform: translateY(-5px);
+            border-color: rgba(89, 171, 110, 0.4);
+            box-shadow: 0 20px 40px rgba(89, 171, 110, 0.08);
+        }
+
+        .privacy-block::after {
+            content: 'Подробнее ➔';
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: 12px;
+            color: #59ab6e;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s;
+        }
+
+        .privacy-block:hover::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .privacy-block h2 {
+            font-size: 24px;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .privacy-block h2 i {
+            color: #59ab6e;
+            background: rgba(89, 171, 110, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .privacy-block p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--card-text);
+        }
+
+                .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            border: 1px solid var(--card-border);
+            padding: 50px;
+            border-radius: 24px;
+            max-width: 650px;
+            width: 90%;
+            position: relative;
+            transform: scale(0.8) translateY(30px);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: var(--text-color);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .close-modal:hover {
+            background: #59ab6e;
+            color: white;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-color);
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--card-text);
+            margin-bottom: 15px;
+        }
+
+        .modal-content ul {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .modal-content ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 12px;
+            color: var(--text-color);
+            font-size: 15px;
+        }
+
+        .modal-content ul li::before {
+            content: "✦";
+            position: absolute;
+            left: 0;
+            color: #59ab6e;
+            text-shadow: 0 0 8px #59ab6e;
+        }
+
+                .action-footer {
+            text-align: center;
+            padding-bottom: 80px;
+        }
+
+        .btn-glow {
+            padding: 16px 45px;
+            background: #59ab6e;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(89, 171, 110, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(89, 171, 110, 0.5);
+        }
+
+        @keyframes liquidText {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+
+        @keyframes cubicFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatSpheres {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-30px);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .privacy-container {
+                grid-template-columns: 1fr;
+            }
+
+            .privacy-hero h1 {
+                font-size: 38px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-nav, .main-menu, .nav-icons .fav-icon, .nav-icons .cart-icon span:not(.badge) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="neon-sphere sphere-1"></div>
+<div class="neon-sphere sphere-2"></div>
+<canvas class="bg-particles" id="particlesCanvas"></canvas>
+<div class="top-nav">
+    <div>
+        <a href="mailto:info@company.com"><i class="fa fa-envelope"></i> info@company.com</a>
+        <a href="tel:010-020-0340"><i class="fa fa-phone"></i> 010-020-0340</a>
+    </div>
+    <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+    </div>
+</div>
+<header class="header">
+    <a href="#" class="logo">Zay</a>
+    <ul class="main-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="policy.htmll">Policy</a></li>
+    </ul>
+
+</header>
+<section class="privacy-hero">
+    <h1>Политика Безопасности</h1>
+    <p>Интерактивный центр управления приватностью Zay. Кликните на любой раздел, чтобы узнать детальную информацию.</p>
+</section>
+<main class="privacy-container">
+    <div class="privacy-block" onclick="openModal('modal-collect')">
+        <h2><i class="fas fa-user-shield"></i> 1. Сбор информации</h2>
+        <p>Мы собираем базовые данные для обработки заказов, логистики и вашей авторизации в личном кабинете
+            магазина...</p>
+    </div>
+
+    <div class="privacy-block" onclick="openModal('modal-use')">
+        <h2><i class="fas fa-chart-pie"></i> 2. Использование данных</h2>
+        <p>Информация помогает улучшать сервис, оперативно доставлять товары и предлагать персональные скидки...</p>
+    </div>
+
+    <div class="privacy-block" onclick="openModal('modal-secure')">
+        <h2><i class="fas fa-key"></i> 3. Защита и SSL</h2>
+        <p>Все транзакции шифруются протоколами безопасности нового поколения. Ваши данные полностью изолированы...</p>
+    </div>
+
+    <div class="privacy-block" onclick="openModal('modal-cookies')">
+        <h2><i class="fas fa-cookie"></i> 4. Файлы Cookie</h2>
+        <p>Используем умные cookie-файлы для сохранения товаров в корзине и настроек вашего интерфейса...</p>
+    </div>
+</main>
+<div class="action-footer">
+    <<a href="index.html" class="btn-glow" onclick="playClickSound()">Принять и продолжить</a>
+</div>
+<div class="modal-overlay" id="modal-collect" onclick="closeAllModals(event)">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeAllModals(force=true)">&times;</button>
+        <h2><i class="fas fa-user-shield"></i> Сбор данных</h2>
+        <p>Мы запрашиваем информацию строго для выполнения обязательств торговой платформы Zay:</p>
+        <ul>
+            <li>ФИО для оформления транспортных накладных курьерских служб.</li>
+            <li>Телефон и Email для автоматической отправки трек-номеров посылок.</li>
+            <li>История заказов для корректного начисления кэшбэка и бонусов.</li>
+        </ul>
+    </div>
+</div>
+<div class="modal-overlay" id="modal-use" onclick="closeAllModals(event)">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeAllModals(force=true)">&times;</button>
+        <h2><i class="fas fa-chart-pie"></i> Использование</h2>
+        <p>Собранные файлы помогают автоматизировать ключевые процессы нашего магазина:</p>
+        <ul>
+            <li>Формирование умных персональных рекомендаций по предметам интерьера.</li>
+            <li>Оптимизация скорости работы и загрузки каталога товаров под ваш девайс.</li>
+            <li>Предотвращение фрод-транзакций, спама и подозрительной бот-активности.</li>
+        </ul>
+    </div>
+</div>
+<div class="modal-overlay" id="modal-secure" onclick="closeAllModals(event)">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeAllModals(force=true)">&times;</button>
+        <h2><i class="fas fa-key"></i> Безопасность</h2>
+        <p>Инфраструктура бренда Zay построена на базе международных стандартов шифрования данных End-to-End.</p>
+        <p>Наши базы данных проходят регулярный независимый аудит кибербезопасности, полностью исключая возможность
+            утечки пользовательских архивов или передачи информации третьим лицам.</p>
+    </div>
+</div>
+<div class="modal-overlay" id="modal-cookies" onclick="closeAllModals(event)">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeAllModals(force=true)">&times;</button>
+        <h2><i class="fas fa-cookie"></i> Файлы Cookie</h2>
+        <p>Cookie хранят временные технические сессии вашего текущего сеанса связи с сервером.</p>
+        <p>Они избавляют вас от необходимости заново вводить логин и пароль при перезагрузках страниц, а также
+            удерживают отложенные вами товары в корзине покупок вплоть до 30 календарных дней.</p>
+    </div>
+</div>
+<script>
+    // Движок Темы (Dark/Light Switcher)
+    function toggleTheme() {
+        playClickSound();
+        const body = document.body;
+        const btn = document.getElementById('themeBtn');
+        if (body.getAttribute('data-theme') === 'light') {
+            body.removeAttribute('data-theme');
+            btn.innerHTML = '<i class="fas fa-moon"></i>';
+        } else {
+            body.setAttribute('data-theme', 'light');
+            btn.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    }
+
+    // Web Audio API — Премиальный футуристичный синтезатор звука клика
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playClickSound() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    // Управление всплывающими модальными окнами
+    function openModal(id) {
+        playClickSound();
+        document.getElementById(id).classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAllModals(e, force = false) {
+        if (force || e.target.classList.contains('modal-overlay') || e.target.classList.contains('close-modal')) {
+            playClickSound();
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            document.body.style.overflow = '';
+        }
+    }
+
+    // Интерактивный движок анимированных частиц заднего плана
+    const canvas = document.getElementById('particlesCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 0.5;
+            this.speedX = Math.random() * 0.4 - 0.2;
+            this.speedY = Math.random() * 0.4 - 0.2;
+            this.opacity = Math.random() * 0.4 + 0.1;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+        }
+
+        draw() {
+            ctx.fillStyle = `rgba(89, 171, 110, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function init() {
+        particles = [];
+        const count = Math.min(70, Math.floor(window.innerWidth / 20));
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+</script>
+</body>
+</html>
+
+
